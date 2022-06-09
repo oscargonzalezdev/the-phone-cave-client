@@ -1,22 +1,31 @@
-import logo from './logo.svg';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import './App.css';
+import { Route, Routes } from 'react-router-dom';
+import PhonesList from './components/PhonesList';
 
 function App() {
+  const [phones, setPhones] = useState(null);
+
+  useEffect(() => {
+    fetchPhones();
+  }, []);
+
+  const fetchPhones = () => {
+    axios.get('http://localhost:5005/phones')
+      .then(response => {
+        setPhones(response.data);
+        console.log(response.data);
+      })
+      .catch(e => console.log("error getting phones from API...", e))
+  }
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <Routes>
+        <Route path='/' element={<h1>Welcome</h1>} />
+        <Route path='/phones' element={<PhonesList phones={phones} updatePhones={fetchPhones} />} />
+      </Routes>
       </header>
     </div>
   );
